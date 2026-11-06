@@ -75,7 +75,7 @@ def equal(expected, **kwargs):
       )
 
 
-def tree_structure(reference, **kwargs):
+def same_tree_structure(reference, **kwargs):
   """Validates that all values have the same PyTree structure as reference."""
   expected = jax.tree.structure(reference)
   for name, value in kwargs.items():
@@ -100,7 +100,7 @@ def is_none(context: str = '', **kwargs):
       raise ValueError(f'Expected {name}={value} to be None. {context}')
 
 
-def batch(pytree, padding_example=None) -> int:
+def batched(pytree, padding_example=None) -> int:
   """Validates a batch pytree and returns the batch size.
 
   Checks that the pytree has at least one leaf, all leaves are arrays with
@@ -142,7 +142,7 @@ def batch(pytree, padding_example=None) -> int:
         f'got sizes: {sorted(sizes)}.'
     )
   if padding_example is not None:
-    tree_structure(padding_example, dataset=pytree)
+    same_tree_structure(padding_example, dataset=pytree)
     data_meta = [(x.shape[1:], x.dtype) for x in leaves]
     pad_meta = [(x.shape, x.dtype) for x in jax.tree.leaves(padding_example)]
     equal(pad_meta, dataset_shape_dtype=data_meta)
